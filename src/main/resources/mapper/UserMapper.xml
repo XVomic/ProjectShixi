@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.mapper.UserMapper">
+
+
+    <resultMap id="userResultMap" type="User">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="persign" column="persign"/>
+        <result property="image" column="image"/>
+    </resultMap>
+
+<!--    登录模块验证用户信息-->
+    <select id="queryUserByUsernameAndPassword" resultMap="userResultMap" parameterType="User">
+        select * from user where username=#{username} and password=#{password}
+    </select>
+
+<!--    注册用户-->
+    <insert id="addUser" parameterType="User">
+        insert into user(username, password,persign,image)
+        values (#{username}, #{password},#{persign},#{image})
+    </insert>
+
+<!--    修改密码-->
+    <update id="updatePassword" parameterType="User">
+        update user set password=#{password} where id=#{id}
+    </update>
+
+<!--    修改用户名/昵称-->
+    <update id="updateUsername" parameterType="User">
+        update user set username=#{username} where id=#{id}
+    </update>
+
+<!--    修改完成返回用户的新信息-->
+    <select id="queryById" parameterType="int">
+        select * from user where id=#{id}
+    </select>
+
+    <!--    修改persign-->
+    <update id="updatePersign" parameterType="User">
+        update user set persign=#{persign} where id=#{id}
+    </update>
+
+
+</mapper>

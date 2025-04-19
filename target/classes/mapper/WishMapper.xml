@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.mapper.WishMapper">
+
+    <resultMap id="wishResultMap" type="Wish">
+        <id property="id" column="id"/>
+        <result property="userID" column="userID"/>
+        <result property="content" column="content"/>
+        <result property="support" column="support"/>
+    </resultMap>
+
+<!--添加一条wish-->
+    <insert id="addWish" parameterType="Wish">
+        insert into wish(userID,content,support) values (#{userID}, #{content},#{support})
+    </insert>
+
+<!--返回刚刚添加的wish-->
+    <select id="queryLastInsert"  resultMap="wishResultMap">
+        select * from wish where id = LAST_INSERT_ID();
+    </select>
+
+<!--查询所有wish-->
+    <select id="queryAllWish" resultMap="wishResultMap">
+        select * from wish
+    </select>
+
+</mapper>

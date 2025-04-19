@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.mapper.RoutineMapper">
+
+
+    <resultMap id="routineResultMap" type="Routine">
+        <id property="id" column="id"/>
+        <result property="userID" column="userID"/>
+        <result property="name" column="name"/>
+        <result property="way" column="way"/>
+
+    </resultMap>
+
+<!--    插入一条routine-->
+    <insert id="addRoutine" parameterType="Routine">
+        insert into routine(userID,name,way) values (#{userID}, #{name},#{way})
+    </insert>
+
+<!--    返回刚刚添加的routine-->
+    <select id="queryLastInsert"  resultMap="routineResultMap">
+        select * from routine where id = LAST_INSERT_ID();
+    </select>
+
+<!--    查询所有的routine-->
+    <select id="queryAllRoutine" parameterType="int" resultMap="routineResultMap">
+        select * from routine where userID =#{userID}
+    </select>
+
+<!--    删除待办-->
+    <delete id="deleteRoutine" parameterType="Routine">
+        delete  from routine where userID=#{userID} and name=#{name} and way=#{way}
+    </delete>
+</mapper>

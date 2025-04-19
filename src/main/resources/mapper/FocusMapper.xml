@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.mapper.FocusMapper">
+
+
+    <resultMap id="focusResultMap" type="Focus">
+        <id property="id" column="id"/>
+        <result property="userID" column="userID"/>
+        <result property="name" column="name"/>
+        <result property="time" column="time"/>
+        <result property="date" column="date"/>
+    </resultMap>
+
+    <resultMap id="staticResultMap" type="Datastatic">
+        <result property="totalRecords" column="totalRecords"/>
+        <result property="totalTime" column="totalTime"/>
+        <result property="totalDays" column="totalDays"/>
+        <result property="todayRecords" column="todayRecords"/>
+        <result property="todayTotaltime" column="todayTotaltime"/>
+    </resultMap>
+
+    <resultMap id="periodstaticMap" type="Periodstatic">
+        <result property="focusName" column="focusName"/>
+        <result property="nameTotalTime" column="nameTotalTime"/>
+        <result property="percent" column="percent"/>
+    </resultMap>
+
+    <!--    插入一条focus记录-->
+    <insert id="addFocus" parameterType="Focus">
+        insert into todolist(userID,name,time,date) values (#{userID}, #{name},#{time},#{date})
+    </insert>
+
+    <!--    查询所有的事件记录-->
+    <select id="queryTotal" parameterType="int" resultMap="staticResultMap">
+        select
+            count(*) as totalRecords,
+            sum(time) as totalTime,
+            count(distinct date) as totalDays
+        from todolist
+        where userID =#{userID};
+    </select>
+
+    <!--        查询当天专注总次数-->
+    <select id="queryTodayRecords" parameterType="Focus" resultType="java.lang.Integer">
+        select count(*)
+        from todolist
+        where userID = #{userID} and date = #{date};
+    </select>
+
+<!--        查询当天所有的事件的总时间-->
+    <select id="queryTodayTotalTime" parameterType="Focus" resultType="java.lang.Integer">
+        select sum(time)
+        from todolist
+        where userID = #{userID} and date = #{date};
+    </select>
+
+<!--            查询一周所有的事件的总时间-->
+    <select id="queryWeekTotalTime" parameterType="Focus" resultType="java.lang.Integer">
+        select sum(time)
+        from todolist
+        where userID = #{userID}
+        and date > #{date};
+    </select>
+
+    <!--        查询一个月内所有的事件的总时间-->
+    <select id="queryMonthTotalTime" parameterType="Focus" resultType="java.lang.Integer">
+        select sum(time)
+        from todolist
+        where userID = #{userID}
+        and date > #{date};
+    </select>
+
+<!--            当天专注事务统计-->
+    <select id="queryTodayByname" parameterType="Focus" resultMap="periodstaticMap">
+        select name as focusName, sum(time) as nameTotalTime,(SUM(time) / (SELECT SUM(time) FROM todolist WHERE userID = #{userID} AND date = #{date})) * 100 AS percent
+        from todolist
+        where userID = #{userID} AND date = #{date}
+        GROUP BY name;
+    </select>
+
+    <!--        当天专注事务统计-->
+    <select id="queryWeekByname" parameterType="Focus" resultMap="periodstaticMap">
+        select name as focusName, sum(time) as nameTotalTime,(SUM(time) / (SELECT SUM(time) FROM todolist WHERE userID = #{userID} AND date > #{date})) * 100 AS percent
+        from todolist
+        where userID = #{userID}
+        and date > #{date}
+        group by name;
+    </select>
+
+    <!--        当天专注事务统计-->
+    <select id="queryMonthByname" parameterType="Focus" resultMap="periodstaticMap">
+        select name as focusName, sum(time) as nameTotalTime,(SUM(time) / (SELECT SUM(time) FROM todolist WHERE userID = #{userID} AND date > #{date})) * 100 AS percent
+        from todolist
+        where userID = #{userID}
+        and date > #{date}
+        group by name;
+    </select>
+
+</mapper>
