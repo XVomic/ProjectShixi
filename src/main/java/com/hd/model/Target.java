@@ -15,4 +15,6 @@ public class Target {
     private String name;
     private String depict;
     private String endDate;
+    private Integer dotimes;
+    private Date lastdo;
 }
